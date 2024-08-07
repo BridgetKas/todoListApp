@@ -60,3 +60,22 @@
   background-color: black;
   color: #fff;
 }
+
+.container {
+  background-color: rgb(114, 230, 114);
+
+}
+
+.completed {
+  padding: 10px;
+  margin-bottom: 10px;
+  list-style:none ;
+  text-align: left;
+  text-decoration: line-through;
+}
+
+.completedContainer {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
