@@ -1,85 +1,87 @@
+import { useState } from 'react';
 import './App.css'
-import { useState } from 'react'
 import Modal from './component/modal/modal';
 
 function App() {
-  const [todoTask, setTodoTask] = useState('')
-  const [todo, setTodo] = useState([])
+  const [todoTask , settodoTask] = useState('')
+  const [todos,setTodos] = useState([])
   const [isModalOpen, setModalOpen] = useState(false);
-  const [editTodoTask,setEditTodoTask] = useState('')
+  const [editTodoTask, setEditTodoTask] = useState('')
   const [activeIndex, setActiveIndex] = useState(-1)
 
   const openModal = (index) => {
-    setModalOpen(true)
+    const task = todos.find((task,taskIndex) => taskIndex === index)
+    setModalOpen(true);
     setActiveIndex(index)
-    const editedTodoTask =  todo.find((item,id) => (id === index))
-    setEditTodoTask(editedTodoTask.title)
-  };
-  const closeModal = () => setModalOpen(false);
-  
-  function addtodoTask () {
-    setTodo([
-      ...todo,
-      { title: todoTask , completed:false},
+    setEditTodoTask(task.title)
+   
+  }
+    
+  function addTodo() {
+    setTodos([
+      ...todos,
+      {
+        title:todoTask,
+        completedTask:false
+      }
     ])
+    settodoTask('')
   }
 
-  function handleDelete (index) {
-    const finaltodo = todo.filter((item,id) => (id !== index))
-    setTodo(finaltodo)
-
+  function deleteTodo(index) {
+    const todoTasks = todos.filter((item,i) => index !== i)
+    setTodos(todoTasks)
   }
 
-  function markasCompleted (index) {
-    const completedTasks = todo.map((task,taskIndex) => {
-      if(index === taskIndex) {
+  function checkedTask(index) {
+    const todoTaskChecked = todos.map((item,indexTask) =>{
+      if(index === indexTask) {
         return {
-          ...task,
-          completed:!task.completed,
+          ...item,
+          completedTask:!item.completedTask
         }
       }else {
-        return task
+        return item
       }
     })
-
-    setTodo(completedTasks)
+    setTodos(todoTaskChecked)
+  
   }
-
-  function saveTodoTask () {
-    const completedTasks = todo.map((task,taskIndex) => {
-      if(activeIndex === taskIndex) {
+  
+  function saveTodo() {
+    const saveChanges = todos.map((task,index) =>{
+      if(index === activeIndex) {
         return {
           ...task,
-          title:editTodoTask,
+          title:editTodoTask
         }
       }else {
-        return task
+        return task;
       }
     })
-
-    setTodo(completedTasks)
+    setTodos(saveChanges)
+    setEditTodoTask('')
+    setModalOpen(false)
   }
-
-
   return (
     <div className='todoContainer'>
       <h1 className='todo'> Todo List</h1>
       <hr/>
       <div className='mainInput'>
-        <input type='text' placeholder='add item...' value={todoTask} className='input' onChange={(e) => setTodoTask(e.target.value)}/>
+        <input type='text' placeholder='add item...' value={todoTask} className='input' onChange={(e) => settodoTask(e.target.value)}/>
       </div>
       <div className='addContainer'>
-        <button className='add' type='button' onClick={addtodoTask}>ADD</button>
+        <button className='add' type='button' onClick={addTodo}>ADD</button>
       </div>
       <ul className='container'>
         {
-          todo.map((item ,index) =>(
+          todos.map((item ,index) =>(
             <div key={index} className='completedContainer inputContainer'>
-              <input type='checkbox' onChange={() => markasCompleted(index)} checked={item.completed}/>
+              <input type='checkbox' onChange={()=> checkedTask(index)} checked={item.completedTask}/>
               <li className='completed'> {item.title}</li>
               <div className='btnContainer'>
-                <button className='edit' onClick={() => openModal(index)}>Edit</button>
-                <button className='delete' onClick={() =>handleDelete(index)}>Delete</button>
+                <button className='edit' onClick={() =>openModal(index)}>Edit</button>
+                <button className='delete' onClick={() => deleteTodo(index)}>Delete</button>
               </div>
             </div>
             
@@ -87,11 +89,11 @@ function App() {
         }
       </ul>
       <div>
-      <Modal show={isModalOpen} onClose={closeModal}>
+      <Modal show={isModalOpen}>
         <div className='modalContent'>
-          <input type='text' placeholder='add item...' value={editTodoTask} className='input' onChange={(e) =>setEditTodoTask(e.target.value)}/>
+          <input type='text' placeholder='add item...' value={editTodoTask} className='input' onChange={(e) => setEditTodoTask(e.target.value)}/>
             <div className='modalContainer'>
-              <button className='edit' onClick={saveTodoTask}>Save</button>
+              <button className='edit' onClick={saveTodo}>Save</button>
             </div>
         </div>
       </Modal>
