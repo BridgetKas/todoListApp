@@ -4,40 +4,36 @@ import Modal from './component/modal/modal';
 
 function App() {
   const[todoTask,setTodoTask] = useState('')
-  const[addTodo, setaddTodo] = useState([])
+  const[addTodos, setaddTodo] = useState(localStorage.getItem('todoStorage') ? JSON.parse(localStorage.getItem('todoStorage')) : [])
   const [isModalOpen,setIsModalOpen] = useState(false)
   const [editTodo,setEditTodo] = useState('')
   const [activeIndex,setActiveIndex] = useState(-1)
   const [completedTodos, setCompletedTodos] = useState([])
 
   function addTodoTask(){
-    setaddTodo(
-      [
-        ...addTodo,
-        {
-          title:todoTask,
-          completed:false
-        }
-      ]
-    )
+    const newTodoTask = [...addTodos,{title:todoTask,completed:false}]
+    setaddTodo(newTodoTask) 
+    
     setTodoTask('')
+    
+    localStorage.setItem('todoStorage', JSON.stringify(newTodoTask))
   }
+
 
   function deleteTodo(index,name) {
     if(name === 'notCompleted'){
-      const newTodo = addTodo.filter((item,todoIndex) => index !== todoIndex)
+      const newTodo = addTodos.filter((item,todoIndex) => index !== todoIndex)
       setaddTodo(newTodo)
     }else {
       const newTodo = completedTodos.filter((item,todoIndex) => index !== todoIndex)
       setCompletedTodos(newTodo)
-
     }
    
   }
 
   function markAsCompleted(index,arrayName) {
     if(arrayName === 'uncompleteTask') {
-      const completedTasks = addTodo.map((item,todoIndex) => {
+      const completedTasks = addTodos.map((item,todoIndex) => {
         if(index === todoIndex){
           return {
             ...item,
@@ -68,7 +64,7 @@ function App() {
         }
       })
       const unCompletedTask = completedTasks.find((item) => item.completed === false)
-      setaddTodo([...addTodo,unCompletedTask])
+      setaddTodo([...addTodos,unCompletedTask])
       const checkedTask = completedTasks.filter(item => item.completed === true)
       console.log(checkedTask)
       setCompletedTodos(checkedTask)
@@ -78,12 +74,12 @@ function App() {
   function openModal(index) {
     setIsModalOpen(true)
     setActiveIndex(index)
-    const todoItem = addTodo.find((item,todoIndex) => index === todoIndex)
+    const todoItem = addTodos.find((item,todoIndex) => index === todoIndex)
     setEditTodo(todoItem.title)
   }
   
   function saveTodo(){
-    const savedTodo = addTodo.map((item,todoIndex) => {
+    const savedTodo = addTodos.map((item,todoIndex) => {
       if(todoIndex === activeIndex){
         return{
           ...item,
@@ -110,7 +106,7 @@ function App() {
       </div>
       <ul className='container'>
         {
-          addTodo.map((item ,index) =>(
+          addTodos.map((item ,index) =>(
             <div key={index} className='completedContainer inputContainer'>
               <input type='checkbox' onChange={()=> markAsCompleted(index,'uncompleteTask')} checked={item.completed}/>
               <li className='completed' > {item.title}</li>
