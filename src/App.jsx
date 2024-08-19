@@ -22,13 +22,20 @@ function App() {
 
   function deleteTodo(index,name) {
     if(name === 'notCompleted'){
-      const newTodo = addTodos.filter((item,todoIndex) => index !== todoIndex)
-      setaddTodo(newTodo)
+      const unCompletedTodos = addTodos.filter((item,todoIndex) => index !==todoIndex)
+
+      setaddTodo(unCompletedTodos)
+
+      localStorage.setItem('todoStorage', JSON.stringify(unCompletedTodos))
     }else {
+      const completedTodo = completedTodos.find((item,i) => index === i)
+      const newStoredTodos = addTodos.filter((item) => item !== completedTodo)
+      localStorage.setItem('todoStorage', JSON.stringify(newStoredTodos))
+
       const newTodo = completedTodos.filter((item,todoIndex) => index !== todoIndex)
       setCompletedTodos(newTodo)
+
     }
-   
   }
 
   function markAsCompleted(index,arrayName) {
@@ -52,6 +59,9 @@ function App() {
           completedTask
         ]
       )
+
+      localStorage.setItem('todoStorage',JSON.stringify(completedTasks))
+
     }else{
       const completedTasks = completedTodos.map((item,todoIndex) => {
         if(index === todoIndex){
@@ -64,9 +74,10 @@ function App() {
         }
       })
       const unCompletedTask = completedTasks.find((item) => item.completed === false)
-      setaddTodo([...addTodos,unCompletedTask])
+      setaddTodo([...addTodos, unCompletedTask])
+      // setaddTodo(completedTasks)
+
       const checkedTask = completedTasks.filter(item => item.completed === true)
-      console.log(checkedTask)
       setCompletedTodos(checkedTask)
     }
   }
