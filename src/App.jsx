@@ -8,7 +8,7 @@ function App() {
   const [isModalOpen,setIsModalOpen] = useState(false)
   const [editTodo,setEditTodo] = useState('')
   const [activeIndex,setActiveIndex] = useState(-1)
-  const [completedTodos, setCompletedTodos] = useState([])
+  const [completedTodos, setCompletedTodos] = useState(localStorage.getItem('completedTodoStorage') ? JSON.parse(localStorage.getItem('completedTodoStorage')) : [])
 
   function addTodoTask(){
     const newTodoTask = [...addTodos,{title:todoTask,completed:false}]
@@ -38,6 +38,7 @@ function App() {
     }
   }
 
+
   function markAsCompleted(index,arrayName) {
     if(arrayName === 'uncompleteTask') {
       const completedTasks = addTodos.map((item,todoIndex) => {
@@ -52,15 +53,12 @@ function App() {
       })
       const uncompletedTasks = completedTasks.filter((item) => !item.completed)
       setaddTodo(uncompletedTasks)
-      const completedTask = completedTasks.find((item) => item.completed === true)
-      setCompletedTodos(
-        [
-          ...completedTodos,
-          completedTask
-        ]
-      )
+      localStorage.setItem('todoStorage',JSON.stringify(uncompletedTasks))
 
-      localStorage.setItem('todoStorage',JSON.stringify(completedTasks))
+      const completedTask = completedTasks.find((item) => item.completed === true)
+      const finishedTodos = [...completedTodos,completedTask]
+      setCompletedTodos(finishedTodos)
+      localStorage.setItem('completedTodoStorage',JSON.stringify(finishedTodos))
 
     }else{
       const completedTasks = completedTodos.map((item,todoIndex) => {
@@ -74,11 +72,14 @@ function App() {
         }
       })
       const unCompletedTask = completedTasks.find((item) => item.completed === false)
-      setaddTodo([...addTodos, unCompletedTask])
-      // setaddTodo(completedTasks)
+      const unCompletedTodos = [...addTodos, unCompletedTask]
+      setaddTodo(unCompletedTodos)
+      localStorage.setItem('todoStorage',JSON.stringify(unCompletedTodos))
 
       const checkedTask = completedTasks.filter(item => item.completed === true)
       setCompletedTodos(checkedTask)
+      localStorage.setItem('completedTodoStorage',JSON.stringify(checkedTask))
+
     }
   }
 
