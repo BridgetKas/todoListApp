@@ -102,6 +102,8 @@ function App() {
       }
     })
     setaddTodo(savedTodo)
+    localStorage.setItem('todoStorage',JSON.stringify(savedTodo))
+
     setIsModalOpen(false)
   }
 
